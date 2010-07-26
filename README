@@ -1,0 +1,22 @@
+Email Reader
+
+Project home: http://github.com/driverdan/emailreader
+Author home: http://driverdan.com
+
+Class to fetch email. Currently only supports saving attachments and deleting messages.
+
+
+Requirements
+-----
+PHP IMAP extension. If you installed from a package it's probably included.
+See http://www.php.net/manual/en/imap.installation.php.
+
+
+Using
+-----
+1. Get latest version from github: git clone git@github.com:driverdan/emailreader.git
+2. Require the class: require_once("email_reader.class.php");
+3. See phpdocs for documentation.
+
+
+Feel free to contribute additional features by forking on github.
