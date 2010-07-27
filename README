@@ -4,6 +4,7 @@ Project home: http://github.com/driverdan/emailreader
 Author home: http://driverdan.com
 
 Class to fetch email. Currently only supports saving attachments and deleting messages.
+This was developed because I needed to save images attached to email sent from smartphones.
 
 
 Requirements

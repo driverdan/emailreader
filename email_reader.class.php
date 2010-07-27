@@ -9,9 +9,9 @@
  * @see http://github.com/driverdan/emailreader
  * @see http://driverdan.com
  *
- * @author Dan DeFelippi
+ * @author Dan DeFelippi <dan@driverdan.com>
  * @license MIT
- * @todo Add additional 
+ * @todo Add additional features beyond saving attachments.
  */
 class EmailReader {
 	// Stores mailbox stream
@@ -87,9 +87,10 @@ class EmailReader {
 	 * @todo Handle duplicate filenames.
 	 *
 	 * @param string $path Directory path to save files in.
-	 * @param bool $delete Delete all emails after processing by default. Set to false to not delete them.
+	 * @param bool $inline Save inline files (eg photos). Default is true.
+	 * @param bool $delete Delete all emails after processing. Default is true.
 	 */
-	function saveAttachments($path, $delete = true) {
+	function saveAttachments($path, $inline = true, $delete = true) {
 		$numMessages = $this->getNumMessages();
 		
 		// Append slash to path if missing
@@ -104,9 +105,24 @@ class EmailReader {
 			
 			// Loop through all email parts
 			foreach ($structure->parts as $part) {
-				// If it's an attachment save it
-				if ($part->disposition == "ATTACHMENT") {
-					$filename = $part->dparameters[0]->value;
+				// Handle attachments and inline files (images)
+				if (strtoupper($part->disposition) == "ATTACHMENT" || ($inline && strtoupper($part->disposition) == "INLINE")) {
+					/**
+					 * File extension is determined first by MIME type.
+					 * This is because some phone email clients do not use real filenames for attachments.
+					 * Other phones use CONTENT-OCTET or other generic MIME type so fallback to file extension.
+					 * This was designed to process images so it may not work correctly for some MIME types.
+					 */
+					$ext = strtolower($part->subtype);
+					
+					if (strlen($ext) > 4) {
+						$ext = end(explode('.', $part->dparameters[0]->value));
+					} else if ($ext == "jpeg") {
+						$ext = "jpg";
+					}
+					// @TODO Add other MIME types here?
+					
+					$filename = $entry['id'] . ".$ext";
 					
 					// Get the body and decode it
 				  	$body = imap_fetchbody($this->mbox, $msgId, $fileNum);
